@@ -11,7 +11,8 @@ const bot = new telegramBot(process.env.TOKEN, { polling: true });
 //   bot.sendMessage(option.chat.id, `Hi, ${option.chat.first_name}`);
 // });
 
-bot.onText(/\/joke/, async (option)=>{
+bot.onText(/\/joke/, async (option) => {
+  try {
     const response = await axios.get(
       "https://api.freeapi.app/api/v1/public/randomjokes/joke/random"
     );
@@ -22,4 +23,11 @@ bot.onText(/\/joke/, async (option)=>{
       option.chat.id,
       `Hey ${option.chat.first_name}, \n \nHere is your joke: \n${response?.data?.data?.content}`
     );
-})
+  } catch (error) {
+    console.error("Error fetching joke: ", error.message);
+    bot.sendMessage(
+      option.chat.id,
+      "unable to fetch joke at this moment, please try again later!..."
+    );
+  }
+});
